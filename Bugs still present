@@ -1,0 +1,211 @@
+// 213 507 582
+// R. Rungiah 
+// CM3 - 2015
+// Tutorial 2 - Fraction Class
+
+#include <iostream>
+using namespace std;
+
+class Fraction
+{
+private:
+	int numerator;
+	int denominator;
+
+	//Simplifying the final answer
+	inline void simp()
+	{
+
+		int c = denominator % numerator;
+		if (c = 0)
+		{
+			numerator = 1;
+			denominator = denominator / numerator;
+		}
+
+		else
+		{
+			int j;
+			if (numerator > denominator)
+				j = numerator;
+			else
+				j = denominator;
+
+			int i = 1;
+			while (i <= j)
+			{
+				if (numerator % i = 0 || denominator % i = 0)
+				{
+					numerator /= i;
+					denominator /= i;
+				}
+
+				i++;
+			}
+		}
+	}
+
+public:
+	Fraction(){};
+	Fraction(int n, int d)
+	{
+		storeN(n);
+		storeD(d);
+	};
+
+	//Functions to store numerators and denominators -- Non-return type
+	void storeN(int n)
+	{
+		numerator = n;
+	}
+	void storeD(int d)
+	{
+		// Check if fraction is valid 
+		if (d != 0)
+			denominator = d;
+		else
+		{
+			cerr << "Error: The fraction is undefined >> Your denominator may not be 0" << endl;
+			denominator = 1;
+		}
+	}
+
+	//Functions to call Numerators and Denominators -- Return type     
+	int callN()
+	{
+		return numerator;
+	}
+	int callD()
+	{
+		return denominator;
+	}
+
+	//Function for addition    
+	static Fraction add(Fraction frac1, Fraction frac2)
+	{
+		Fraction answer;
+		int num1 = frac1.callN(),
+			num2 = frac2.callN(),
+			den2 = frac2.callD();
+		if (frac2.callD() != frac1.callD())
+		{
+			// Find a common denominator
+			num1 *= den2;
+			num2 *= frac1.callD();
+			den2 *= frac1.callD();
+		}
+		answer.storeN(num1 + num2);
+		answer.storeD(den2);
+		answer.simp();
+		return answer;
+	}
+
+	//Function for Subraction
+	//Subtraction is merely the addition of the first fraction to the negative of the second
+	static Fraction subt(Fraction frac1, Fraction frac2)
+	{
+		//make second fraction negative
+		frac2.storeN(-frac2.callN());
+		//add
+		return add(frac1, frac2);
+	}
+
+	//Function for multiplication
+	static Fraction mult(Fraction frac1, Fraction frac2)
+	{
+		Fraction answer;
+		answer.storeN(frac1.callN() * frac2.callN());
+		answer.storeD(frac1.callD() * frac2.callD());
+		answer.simp();
+		return answer;
+	}
+
+	//Function for Division
+	//Division is merely multiplication of the first fraction to the inverse of the second
+	static Fraction div(Fraction frac1, Fraction frac2)
+	{
+		//invert fraction 2
+		frac2.storeD(frac2.callN());
+		frac2.storeN(frac2.callD());
+		//multiply
+		return mult(frac1, frac2);
+	}
+
+};
+
+int main()
+{
+	int numerator1, denominator1, numerator2, denominator2, operation;
+	Fraction frac1, frac2;
+
+	//obtain fractions
+	cout << "Please enter the numerator, then the denominator of the first fraction:\n ";
+	cin >> numerator1 >> denominator1;
+	frac1 = Fraction(numerator1, denominator1);
+	cout << "Please enter the numerator, then denominator of the second fraction:\n ";
+	cin >> numerator2 >> denominator2;
+	frac2 = Fraction(numerator2, denominator2);
+
+	//obtain operation 
+	cout << "Please enter the number of the operation you would like to perform:\n" << endl;
+	cout << "1.addition" << endl;
+	cout << "2.subtraction" << endl;
+	cout << "3.multiplication" << endl;
+	cout << "4.division" << endl;
+	cin >> operation;
+	cout << endl;
+
+	//check if operation is valid
+	if (operation < 1 || operation > 4)
+	{
+		cerr << "Error: You have selected an invalid operation\n" << endl;
+		operation = 1;
+	}
+
+	//Perform operation if valid
+	else
+	{
+		switch (operation)
+		{
+		case 1:
+		{
+			Fraction ans = add(frac1, frac2);
+			cout << "Fraction1 + Fraction2 = ";
+			cout << ans.callN() << "/" << ans.callD() << endl;
+			break;
+		}
+
+		case 2:
+		{
+			Fraction ans = subt(frac1, frac2);
+
+			cout << "Fraction1 - Fraction2 = ";
+			cout << ans.callN() << "/" << ans.callD() << endl;
+			break;
+		}
+
+		case 3:
+		{
+			Fraction ans = mult(frac1, frac2);
+
+			cout << "Fraction1 x Fraction2 = ";
+			cout << ans.callN() << "/" << ans.callD() << endl;
+			break;
+		}
+
+		case 4:
+		{
+			Fraction ans = div(frac1, frac2);
+
+			cout << "Fraction1 / Fraction2 = ";
+			cout << ans.callN() << "/" << ans.callD() << endl;
+			break;
+		}
+		}
+	}
+
+
+	system("pause");
+	return 0;
+
+}
